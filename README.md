@@ -53,3 +53,18 @@ Run the script to organize files based on project names:
 
 ```bash
 python 01_split-into-project-folders.py
+
+python 02a_patch-UMI-into-samplesheet.py -i <input_file> -o <output_file> --force
+
+
+python 02a_patch-UMI-into-samplesheet.py -i /path/to/SampleSheet.csv -o /path/to/SampleSheet.FH.csv --force
+
+./02b_create.UMI.output.sh -b <BCL_INPUT_DIR> -s <SAMPLE_SHEET> -o <OUTPUT_DIR> [-f]
+
+
+./02b_create.UMI.output.sh -b 250324_VH02146_11_AAGNTTGM5/ \
+-s 250324_VH02146_11_AAGNTTGM5/SampleSheet.FH.csv \
+-o 250324_VH02146_11_AAGNTTGM5/Analysis/final2 -f
+
+
+
