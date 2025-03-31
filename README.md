@@ -122,5 +122,5 @@ Specify your license here (e.g., MIT License).
 
 ## Contact
 
-For questions or issues, please contact [Your Name] at [your.email@example.com].
+For questions or issues, please contact [Frank Harders] at [frank.harders@wur.nl].
 
