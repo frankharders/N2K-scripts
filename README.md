@@ -54,6 +54,12 @@ Run the script to organize files based on project names:
 ```bash
 python 01_split-into-project-folders.py
 
+
+
+- **02a_patch-UMI-into-samplesheet.py** 
+
+
+
 python 02a_patch-UMI-into-samplesheet.py -i <input_file> -o <output_file> --force
 
 
