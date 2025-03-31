@@ -1,76 +1,126 @@
-# Data Processing & Dragen Automation Tools
+# Data Processing & Dragen Automation Scripts
 
-This repository contains a collection of scripts designed to automate data processing tasks and to streamline the execution of the Dragen pipeline. The tools included are used for splitting project folders, patching sample sheets with UMI-related information, and wrapping the Dragen command with detailed logging.
+This repository includes three scripts designed to automate common data processing workflows related to SampleSheets and Dragen pipeline execution. Each script has a specific purpose, described in detail below with clear usage examples.
 
-## Repository Contents
+---
 
-- **01_split-into-project-folders.py**  
-  This script:
-  - Prompts the user for a working directory (with auto-completion support).
-  - Changes to the specified working directory.
-  - Retrieves system information (hostname, IP address, Python version, and username) and logs it.
-  - Finds the latest project folder in the `Analysis/` directory.
-  - Reads a `SampleSheet.csv` file from the latest folder (inside a `Data` subdirectory).
-  - Extracts the `[Cloud_Data]` section, creates unique project directories based on project names, and copies the `SampleSheet.csv` and related FASTQ files into these directories.
+## 1. `01_split-into-project-folders.py`
 
-- **02a_patch-UMI-into-samplesheet.py**  
-  This script:
-  - Reads an input `SampleSheet.csv` file.
-  - Searches for the first line that starts with `OverrideCycles` (case sensitive).
-  - Inserts two fixed text lines immediately after that line:
-    ```
-    CreateFastqForIndexReads,1
-    TrimUMI,0
-    ```
-  - Writes the modified content to a specified output file.
-  - Logs all operations and errors in two log files (general and error logs) that are stored in the same directory as the output file.
+**Purpose:**
+- Splits a SampleSheet into project-specific folders.
+- Creates directories based on project names extracted from the `[Cloud_Data]` section.
+- Copies the corresponding `SampleSheet.csv` and FASTQ files into each project-specific directory.
 
-- **02b_create.UMI.output.sh**  
-  This Bash script:
-  - Wraps the Dragen command with fixed options for BCL conversion.
-  - Accepts command-line options for:
-    - **BCL input directory** (`-b`)
-    - **Sample sheet file** (`-s`)
-    - **Output directory** (`-o`)
-    - **Force flag** (`-f`) – to force overwriting if necessary.
-  - Creates a log file (`dragen_run.log`) in the output directory that records the user, hostname, date, time, the exact command executed, and any errors.
-
-## Requirements
-
-- **Python:**  
-  - `01_split-into-project-folders.py` can run on Python 2 (with `raw_input`) or can be adapted for Python 3.
-  - `02a_patch-UMI-into-samplesheet.py` is written for Python 3.
-- **Bash:**  
-  - `02b_create.UMI.output.sh` is a Bash script and requires a Unix-like environment.
-- **Dragen:**  
-  - The Dragen tool must be installed and available in your PATH for the Bash wrapper to execute the command successfully.
-
-## Usage
-
-### 1. Splitting Project Folders
-
-Run the script to organize files based on project names:
+### Usage:
 
 ```bash
 python 01_split-into-project-folders.py
+```
 
-### 1. Splitting Project Folders
+- The script prompts you to enter the working directory.
+- Creates `script_log.txt` in the working directory with execution details (hostname, IP, Python version, user).
 
-02a_patch-UMI-into-samplesheet.py** 
+---
 
+## 2. `02a_patch-UMI-into-samplesheet.py`
 
+**Purpose:**
+- Inserts fixed UMI-related lines into a SampleSheet immediately after the line beginning with `OverrideCycles`:
+  ```
+  CreateFastqForIndexReads,1
+  TrimUMI,0
+  ```
+- Case-sensitive insertion.
+- Logs execution details and errors.
 
-python 02a_patch-UMI-into-samplesheet.py -i <input_file> -o <output_file> --force
+### Usage:
 
+```bash
+python 02a_patch-UMI-into-samplesheet.py -i <input_file> -o <output_file> [--force]
+```
 
-python 02a_patch-UMI-into-samplesheet.py -i /path/to/SampleSheet.csv -o /path/to/SampleSheet.FH.csv --force
+**Example:**
 
+```bash
+python 02a_patch-UMI-into-samplesheet.py \
+  -i /path/to/SampleSheet.csv \
+  -o /path/to/SampleSheet.FH.csv \
+  --force
+```
+
+- Logs:
+  - General log: `insert_after_overridecycles.log`
+  - Error log: `insert_after_overridecycles.err`
+
+---
+
+## 3. `02b_create.UMI.output.sh`
+
+**Purpose:**
+- Runs the Dragen command with specified parameters for BCL conversion.
+- Handles command-line options and creates a detailed log file in the specified output directory.
+
+### Usage:
+
+```bash
 ./02b_create.UMI.output.sh -b <BCL_INPUT_DIR> -s <SAMPLE_SHEET> -o <OUTPUT_DIR> [-f]
+```
 
+**Example:**
 
-./02b_create.UMI.output.sh -b 250324_VH02146_11_AAGNTTGM5/ \
--s 250324_VH02146_11_AAGNTTGM5/SampleSheet.FH.csv \
--o 250324_VH02146_11_AAGNTTGM5/Analysis/final2 -f
+```bash
+./02b_create.UMI.output.sh \
+  -b 250324_VH02146_11_AAGNTTGM5/ \
+  -s 250324_VH02146_11_AAGNTTGM5/SampleSheet.FH.csv \
+  -o 250324_VH02146_11_AAGNTTGM5/Analysis/final2 \
+  -f
+```
 
+- Log file:
+  - Created in the output directory: `dragen_run.log`
+  - Contains execution details (user, hostname, command executed, date/time, and any errors).
 
+---
+
+## Prerequisites
+
+- **Python:**
+  - Script 1 (`01_split-into-project-folders.py`) is Python 2 compatible (adaptable to Python 3).
+  - Script 2 (`02a_patch-UMI-into-samplesheet.py`) requires Python 3.
+
+- **Bash:**
+  - Script 3 (`02b_create.UMI.output.sh`) requires a Unix-like environment.
+
+- **Dragen:**
+  - Must be installed and accessible via command line.
+
+---
+
+## Logging
+
+Each script provides extensive logging:
+
+- **Script 1:** Logs details in `script_log.txt`.
+- **Script 2:** Generates two logs (`insert_after_overridecycles.log`, `insert_after_overridecycles.err`).
+- **Script 3:** Logs command execution details to `dragen_run.log`.
+
+---
+
+## Additional Notes
+
+- Ensure dependencies (Python versions, Dragen) are correctly installed.
+- Adjust file paths as needed.
+- Logs ensure full transparency and traceability.
+
+---
+
+## License
+
+Specify your license here (e.g., MIT License).
+
+---
+
+## Contact
+
+For questions or issues, please contact [Your Name] at [your.email@example.com].
 
