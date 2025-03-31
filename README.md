@@ -54,9 +54,9 @@ Run the script to organize files based on project names:
 ```bash
 python 01_split-into-project-folders.py
 
+### 1. Splitting Project Folders
 
-
-- **02a_patch-UMI-into-samplesheet.py** 
+02a_patch-UMI-into-samplesheet.py** 
 
 
 
